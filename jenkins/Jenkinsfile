@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        BACKEND_IMAGE = "yourdockerhub/backend"
-        FRONTEND_IMAGE = "yourdockerhub/frontend"
+        BACKEND_IMAGE = "ymore23/backend"
+        FRONTEND_IMAGE = "ymore23/frontend"
     }
 
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/YOUR_USERNAME/goal-tracker.git'
+                git 'https://github.com/yashmore-23/goal-tracker.git'
             }
         }
 
