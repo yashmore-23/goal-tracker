@@ -1,1 +1,4 @@
 .env
+# Ignore Minikube binary
+jenkins/minikube-linux-amd64
+
