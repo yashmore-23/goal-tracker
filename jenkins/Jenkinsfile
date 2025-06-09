@@ -7,19 +7,34 @@ pipeline {
     }
 
     stages {
-       stage('Checkout') {
+
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
+        stage('Checkout') {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: '*/master']],
-                    userRemoteConfigs: [[url: 'https://github.com/yashmore-23/goal-tracker.git']],
-                    doGenerateSubmoduleConfigurations: false,
-                    submoduleCfg: [],
+                    branches: [[name: 'origin/master']], // Change to 'origin/main' if your repo uses 'main'
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/yashmore-23/goal-tracker.git'
+                    ]],
                     extensions: [
-                        [$class: 'WipeWorkspace'], // Cleans the workspace
-                        [$class: 'CloneOption', noTags: false, shallow: false, depth: 0, timeout: 10]
+                        [$class: 'WipeWorkspace'], // Clean .git metadata
+                        [$class: 'CloneOption', shallow: false, depth: 0, timeout: 10]
                     ]
                 ])
+            }
+        }
+
+        stage('Debug Branches') {
+            steps {
+                sh 'echo "Available remote branches:"'
+                sh 'git branch -r || true'
+                sh 'git rev-parse origin/master || true' // Add this to verify branch presence
             }
         }
 
@@ -44,10 +59,19 @@ pipeline {
             }
         }
 
-        stage('Apply K8s') {
+        stage('Apply Kubernetes Config') {
             steps {
                 sh 'kubectl apply -f k8s/'
             }
+        }
+    }
+
+    post {
+        failure {
+            echo '❌ Build failed. Please check the logs for errors.'
+        }
+        success {
+            echo '✅ CI/CD pipeline completed successfully.'
         }
     }
 }
