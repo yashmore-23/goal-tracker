@@ -1,0 +1,10 @@
+.env
+# Ignore Minikube binary
+jenkins/minikube-linux-amd64
+
+jenkins/minikube-linux-amd64
+jenkins/kubectl
+jenkins/minikube-linux-amd64
+jenkins/kubectl
+jenkins/minikube-linux-amd64
+jenkins/kubectl
