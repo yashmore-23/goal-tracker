@@ -7,9 +7,19 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repo') {
+       stage('Checkout') {
             steps {
-                git 'https://github.com/yashmore-23/goal-tracker.git'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/master']],
+                    userRemoteConfigs: [[url: 'https://github.com/yashmore-23/goal-tracker.git']],
+                    doGenerateSubmoduleConfigurations: false,
+                    submoduleCfg: [],
+                    extensions: [
+                        [$class: 'WipeWorkspace'], // Cleans the workspace
+                        [$class: 'CloneOption', noTags: false, shallow: false, depth: 0, timeout: 10]
+                    ]
+                ])
             }
         }
 
