@@ -23,7 +23,7 @@ pipeline {
         stage('Push Images') {
             steps {
                 withCredentials([usernamePassword(credentialsId: '186a4a99-e830-4eb3-98fb-4485d8ea5ebf', usernameVariable: 'Username', passwordVariable: 'Password')]) {
-                    sh "sudo docker login -u ${env.Username} -p ${env.Password}"
+                    sh 'docker login -u ${env.Username} -p ${env.Password}'
                     sh 'docker push $BACKEND_IMAGE'
                     sh 'docker push $FRONTEND_IMAGE'
                 }
