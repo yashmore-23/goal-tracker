@@ -7,7 +7,6 @@ pipeline {
     }
 
     stages {
-
         stage('Clean Workspace') {
             steps {
                 deleteDir()
@@ -16,14 +15,13 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: 'origin/master']], // Change to 'origin/main' if your repo uses 'main'
+                checkout([$class: 'GitSCM',
+                    branches: [[name: 'origin/main']], // ← Changed to 'main'
                     userRemoteConfigs: [[
                         url: 'https://github.com/yashmore-23/goal-tracker.git'
                     ]],
                     extensions: [
-                        [$class: 'WipeWorkspace'], // Clean .git metadata
+                        [$class: 'WipeWorkspace'],
                         [$class: 'CloneOption', shallow: false, depth: 0, timeout: 10]
                     ]
                 ])
@@ -32,9 +30,8 @@ pipeline {
 
         stage('Debug Branches') {
             steps {
-                sh 'echo "Available remote branches:"'
-                sh 'git branch -r || true'
-                sh 'git rev-parse origin/master || true' // Add this to verify branch presence
+                sh 'echo "Remote branches:"'
+                sh 'git branch -r'
             }
         }
 
@@ -47,11 +44,7 @@ pipeline {
 
         stage('Push Images') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: '186a4a99-e830-4eb3-98fb-4485d8ea5ebf',
-                    usernameVariable: 'Username',
-                    passwordVariable: 'Password'
-                )]) {
+                withCredentials([usernamePassword(credentialsId: '186a4a99-e830-4eb3-98fb-4485d8ea5ebf', usernameVariable: 'Username', passwordVariable: 'Password')]) {
                     sh "docker login -u ${env.Username} -p ${env.Password}"
                     sh "docker push $BACKEND_IMAGE"
                     sh "docker push $FRONTEND_IMAGE"
@@ -59,7 +52,7 @@ pipeline {
             }
         }
 
-        stage('Apply Kubernetes Config') {
+        stage('Apply Kubernetes') {
             steps {
                 sh 'kubectl apply -f k8s/'
             }
@@ -67,11 +60,11 @@ pipeline {
     }
 
     post {
-        failure {
-            echo '❌ Build failed. Please check the logs for errors.'
-        }
         success {
-            echo '✅ CI/CD pipeline completed successfully.'
+            echo '✅ Build successful'
+        }
+        failure {
+            echo '❌ Build failed'
         }
     }
 }
