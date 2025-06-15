@@ -1,4 +1,3 @@
-// Final Optimized Navbar.js
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -17,9 +16,11 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             Goal Tracker
           </Link>
         </Typography>
-        <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
+
+        <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit" sx={{ mr: 1 }}>
           {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
         </IconButton>
+
         {token ? (
           <>
             <Button color="inherit" component={Link} to="/roadmap">AI Roadmap</Button>
